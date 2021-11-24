@@ -1,17 +1,12 @@
-﻿using Microsoft.Azure.Management.AppService.Fluent;
+﻿using System;
 using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Authentication;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
 {
-    public partial class CloudBroker:ICloudBroker
+    public partial class CloudBroker : ICloudBroker
     {
         private readonly string clientId;
         private readonly string clientSecret;
@@ -28,7 +23,7 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
 
         private IAzure AuthenticateAzure()
         {
-            AzureCredentials azureCredentials = 
+            AzureCredentials azureCredentials =
              SdkContext.AzureCredentialsFactory.FromServicePrincipal(
                     clientId: this.clientId,
                     clientSecret: this.clientSecret,
