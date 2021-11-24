@@ -11,6 +11,8 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
         private readonly string clientId;
         private readonly string clientSecret;
         private readonly string tenantId;
+        private readonly string adminName;
+        private readonly string adminAccess;
         private readonly IAzure azure;
 
         public CloudBroker()
@@ -18,6 +20,8 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
             this.clientId = Environment.GetEnvironmentVariable("AzureClientId");
             this.clientSecret = Environment.GetEnvironmentVariable("AzureClientSecret");
             this.tenantId = Environment.GetEnvironmentVariable("AzureTenantId");
+            this.adminName = Environment.GetEnvironmentVariable("AzureAdminName");
+            this.adminAccess = Environment.GetEnvironmentVariable("AureAdminAccess");
             this.azure = AuthenticateAzure();
         }
 
@@ -27,7 +31,7 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
              SdkContext.AzureCredentialsFactory.FromServicePrincipal(
                     clientId: this.clientId,
                     clientSecret: this.clientSecret,
-                    tenantId: this.tenantId,
+                    tenantId: this.tenantId,                    
                     environment: AzureEnvironment.AzureGlobalCloud);
 
             return Azure.Configure()
