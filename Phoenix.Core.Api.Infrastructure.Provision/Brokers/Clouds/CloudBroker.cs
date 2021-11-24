@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
 {
-    public partial class CloudBroker
+    public partial class CloudBroker:ICloudBroker
     {
         private readonly string clientId;
         private readonly string clientSecret;
