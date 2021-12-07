@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Azure.Management.AppService.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 
 namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudManagements
@@ -8,5 +9,10 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
         ValueTask<IResourceGroup> ProvisionResourceGroupAsync(
             string projectName,
             string environment);
+
+        ValueTask<IAppServicePlan> ProvisionPlanAsync(
+            string projectName,
+            string environment,
+            IResourceGroup resourceGroup);
     }
 }
