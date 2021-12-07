@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Azure.Management.AppService.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
+using Microsoft.Azure.Management.Sql.Fluent;
 
 namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudManagements
 {
@@ -11,6 +12,11 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             string environment);
 
         ValueTask<IAppServicePlan> ProvisionPlanAsync(
+            string projectName,
+            string environment,
+            IResourceGroup resourceGroup);
+
+        ValueTask<ISqlServer> ProvisionSqlServerASync(
             string projectName,
             string environment,
             IResourceGroup resourceGroup);

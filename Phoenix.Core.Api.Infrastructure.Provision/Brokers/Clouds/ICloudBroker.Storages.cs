@@ -7,11 +7,11 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
 {
     public partial interface ICloudBroker
     {
-        ValueTask<ISqlServer> CreateSqlServer(
+        ValueTask<ISqlServer> CreateSqlServerAsync(
             string sqlServerName,
             IResourceGroup resourceGroup);
 
-        ValueTask<ISqlDatabase> CreateSqlDatabase(
+        ValueTask<ISqlDatabase> CreateSqlDatabaseAsync(
             string sqlDatabaseName,
             ISqlServer sqlServer);
 

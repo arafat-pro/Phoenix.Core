@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Azure.Management.AppService.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
+using Microsoft.Azure.Management.Sql.Fluent;
 using Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds;
 using Phoenix.Core.Api.Infrastructure.Provision.Brokers.Loggings;
 
@@ -33,10 +34,25 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
         {
             string planName = $"{projectName}-PLAN-{environment}".ToUpper();
             this.loggingBroker.LogActivity(message: $"{planName} Provisioning...");
-            IAppServicePlan plan= await this.cloudBroker.CreatePlanAsync(planName, resourceGroup);
+            IAppServicePlan plan = await this.cloudBroker.CreatePlanAsync(planName, resourceGroup);
             this.loggingBroker.LogActivity(message: $"{plan} Provisioned.");
 
             return plan;
+        }
+
+        public async ValueTask<ISqlServer> ProvisionSqlServerASync(string projectName, string environment, IResourceGroup resourceGroup)
+        {
+            string sqlServerName = $"{projectName}-dbserver-{environment}".ToLower();
+            this.loggingBroker.LogActivity(message: $"Provisioning {sqlServerName}...");
+
+            ISqlServer sqlServer =
+                await this.cloudBroker.CreateSqlServerAsync(
+                    sqlServerName,
+                    resourceGroup);
+
+            this.loggingBroker.LogActivity(message: $"{sqlServer} Provisioned.");
+
+            return sqlServer;
         }
     }
 }

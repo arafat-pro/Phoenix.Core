@@ -8,7 +8,7 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
 {
     public partial class CloudBroker
     {
-        public async ValueTask<ISqlServer> CreateSqlServerASync(
+        public async ValueTask<ISqlServer> CreateSqlServerAsync(
             string sqlServerName,
             IResourceGroup resourceGroup)
         {
@@ -21,7 +21,7 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds
                 .CreateAsync();
         }
 
-        public async ValueTask<ISqlDatabase> CreateSqlDatabase(
+        public async ValueTask<ISqlDatabase> CreateSqlDatabaseAsync(
             string sqlDatabaseName,
             ISqlServer sqlServer)
         {
