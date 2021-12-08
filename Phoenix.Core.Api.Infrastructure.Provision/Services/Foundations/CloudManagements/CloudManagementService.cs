@@ -4,6 +4,7 @@ using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.Sql.Fluent;
 using Phoenix.Core.Api.Infrastructure.Provision.Brokers.Clouds;
 using Phoenix.Core.Api.Infrastructure.Provision.Brokers.Loggings;
+using Phoenix.Core.Api.Infrastructure.Provision.Models.Storages;
 
 namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudManagements
 {
@@ -18,7 +19,9 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             this.loggingBroker = new LoggingBroker();
         }
 
-        public async ValueTask<IResourceGroup> ProvisionResourceGroupAsync(string projectName, string environment)
+        public async ValueTask<IResourceGroup> ProvisionResourceGroupAsync(
+            string projectName,
+            string environment)
         {
             string resourceGroupName = $"{projectName}-RESOURCES-{environment}".ToUpper();
             this.loggingBroker.LogActivity(message: $"Provisioning {resourceGroupName}...");
@@ -30,7 +33,10 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             return resourceGroup;
         }
 
-        public async ValueTask<IAppServicePlan> ProvisionPlanAsync(string projectName, string environment, IResourceGroup resourceGroup)
+        public async ValueTask<IAppServicePlan> ProvisionPlanAsync(
+            string projectName,
+            string environment,
+            IResourceGroup resourceGroup)
         {
             string planName = $"{projectName}-PLAN-{environment}".ToUpper();
             this.loggingBroker.LogActivity(message: $"{planName} Provisioning...");
@@ -40,7 +46,10 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             return plan;
         }
 
-        public async ValueTask<ISqlServer> ProvisionSqlServerASync(string projectName, string environment, IResourceGroup resourceGroup)
+        public async ValueTask<ISqlServer> ProvisionSqlServerASync(
+            string projectName,
+            string environment,
+            IResourceGroup resourceGroup)
         {
             string sqlServerName = $"{projectName}-dbserver-{environment}".ToLower();
             this.loggingBroker.LogActivity(message: $"Provisioning {sqlServerName}...");
@@ -53,6 +62,38 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             this.loggingBroker.LogActivity(message: $"{sqlServer} Provisioned.");
 
             return sqlServer;
+        }
+
+        public async ValueTask<SqlDatabase> ProvisionSqlDatabaseAsync(
+            string projectname,
+            string environment,
+            ISqlServer sqlServer)
+        {
+            string sqlDatabaseName = $"{projectname}-db-{environment}".ToLower();
+            this.loggingBroker.LogActivity(message: $"Provisioning {sqlDatabaseName}...");
+
+            ISqlDatabase sqlDatabase = await this.cloudBroker.CreateSqlDatabaseAsync(
+                sqlDatabaseName,
+                sqlServer);
+
+            this.loggingBroker.LogActivity(message: $"{sqlDatabaseName} Provisioned.");
+
+            return new SqlDatabase
+            {
+                Database = sqlDatabase,
+                ConnectionString = GenerateConnectionString(sqlDatabase)
+            };
+        }
+
+        private string GenerateConnectionString(ISqlDatabase sqlDatabase)
+        {
+            SqlDatabaseAccess sqlDatabaseAccess =
+                this.cloudBroker.GetAdminAccess();
+
+            return $"Server = tcp:{sqlDatabase.SqlServerName}.database.windows.net,1433;" +
+                    $"Initial Catalog={sqlDatabase.Name};" +
+                    $"User ID = {sqlDatabaseAccess.AdminName}; " +
+                    $"Password = {sqlDatabaseAccess.AdminAccess}; ";
         }
     }
 }
