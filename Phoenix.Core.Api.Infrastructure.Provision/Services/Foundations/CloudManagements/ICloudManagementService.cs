@@ -26,5 +26,12 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             string projectname,
             string environment,
             ISqlServer sqlServer);
+
+        ValueTask<IWebApp> ProvisionWebAppAsync(
+            string projectName,
+            string environment,
+            string databaseConnectionString,
+            IResourceGroup resourceGroup,
+            IAppServicePlan appServicePlan);
     }
 }

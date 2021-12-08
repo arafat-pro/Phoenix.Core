@@ -85,6 +85,27 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             };
         }
 
+        public async ValueTask<IWebApp> ProvisionWebAppAsync(
+            string projectName,
+            string environment,
+            string databaseConnectionString,
+            IResourceGroup resourceGroup,
+            IAppServicePlan appServicePlan)
+        {
+            string webAppName = $"{projectName}-{environment}".ToLower();
+            this.loggingBroker.LogActivity(message: $"Provisoning {webAppName}...");
+
+            IWebApp webApp = await this.cloudBroker.CreateWebAppAsync(
+                    webAppName,
+                    databaseConnectionString,
+                    appServicePlan,
+                    resourceGroup);
+
+            this.loggingBroker.LogActivity(message: $"{webAppName} Provisioned.");
+
+            return webApp;
+        }
+
         private string GenerateConnectionString(ISqlDatabase sqlDatabase)
         {
             SqlDatabaseAccess sqlDatabaseAccess =
