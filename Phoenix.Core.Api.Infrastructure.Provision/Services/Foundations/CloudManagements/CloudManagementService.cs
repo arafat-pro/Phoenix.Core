@@ -13,7 +13,7 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
         private readonly ICloudBroker cloudBroker;
         private readonly ILoggingBroker loggingBroker;
 
-        public CloudManagementService(ICloudBroker cloudBroker, ILoggingBroker loggingBroker)
+        public CloudManagementService()
         {
             this.cloudBroker = new CloudBroker();
             this.loggingBroker = new LoggingBroker();
@@ -106,6 +106,28 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             return webApp;
         }
 
+        public async ValueTask DeprovisionResourceGroupAsync(
+            string projectName,
+            string environment)
+        {
+            string resourceGroupName = $"{projectName}-RESOURCES-{environment}".ToUpper();
+
+            bool isResourceGroupExist =
+                await this.cloudBroker.CheckResourceGroupExistAsync(resourceGroupName);
+
+            if (isResourceGroupExist)
+            {
+                this.loggingBroker.LogActivity(message: $"Deprovisioning {resourceGroupName}...");
+                await this.cloudBroker.DeleteResourceGroupAsync(resourceGroupName);
+                this.loggingBroker.LogActivity(message: $"{resourceGroupName} Deprovisioned.");
+            }
+            else
+            {
+                this.loggingBroker.LogActivity(
+                    message: $"Resource Group {resourceGroupName} doesn't exist. No Action Taken.");
+            }
+        }
+
         private string GenerateConnectionString(ISqlDatabase sqlDatabase)
         {
             SqlDatabaseAccess sqlDatabaseAccess =
@@ -116,5 +138,6 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
                     $"User ID = {sqlDatabaseAccess.AdminName}; " +
                     $"Password = {sqlDatabaseAccess.AdminAccess}; ";
         }
+
     }
 }

@@ -33,5 +33,9 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Foundations.CloudMa
             string databaseConnectionString,
             IResourceGroup resourceGroup,
             IAppServicePlan appServicePlan);
+
+        ValueTask DeprovisionResourceGroupAsync(
+            string projectName,
+            string environment);
     }
 }
