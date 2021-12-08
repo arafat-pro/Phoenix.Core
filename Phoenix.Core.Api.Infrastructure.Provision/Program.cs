@@ -1,12 +1,16 @@
-﻿using System;
+﻿using System.Threading.Tasks;
+using Phoenix.Core.Api.Infrastructure.Provision.Services.Processings.CloudManagements;
 
 namespace Phoenix.Core.Api.Infrastructure.Provision
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            ICloudManagementProcessingService cloudManagementProcessingService =
+                new CloudManagementProcessingService();
+
+            await cloudManagementProcessingService.ProcessAsync();
         }
     }
 }
