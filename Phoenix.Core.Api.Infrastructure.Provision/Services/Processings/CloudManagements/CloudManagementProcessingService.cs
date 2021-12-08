@@ -24,9 +24,14 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Processings.CloudMa
         {
             CloudManagementConfiguration cloudManagementConfiguration =
                 this.configurationBroker.GetConfigurations();
+
             await ProvisionAsync(
                 projectName: cloudManagementConfiguration.ProjectName,
                 cloudAction: cloudManagementConfiguration.Up);
+
+            await DeprovisionAsync(
+                projectName: cloudManagementConfiguration.ProjectName,
+                cloudAction: cloudManagementConfiguration.Down);
         }
 
         private async ValueTask ProvisionAsync(
@@ -68,6 +73,20 @@ namespace Phoenix.Core.Api.Infrastructure.Provision.Services.Processings.CloudMa
                         appServicePlan);
             }
 
+        }
+
+        private async ValueTask DeprovisionAsync(
+            string projectName,
+            CloudAction cloudAction)
+        {
+            List<string> environments = RetrieveEnvironemnts(cloudAction);
+
+            foreach (string environmentName in environments)
+            {
+                await this.cloudManagementService.DeprovisionResourceGroupAsync(
+                    projectName,
+                    environmentName);
+            }
         }
 
         private static List<string> RetrieveEnvironemnts(CloudAction cloudAction) =>
